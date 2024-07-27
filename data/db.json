@@ -1,0 +1,28 @@
+{
+    "Products":[
+        {
+            "id" : 1,
+            "name" : "computer",
+            "price" : 9700,
+            "checked" : true
+        },
+        {
+            "id" : 2,
+            "name" : "xbox",
+            "price" : 4500,
+            "checked" : false
+        },
+        {
+            "id" : 3,
+            "name" : "tesla",
+            "price" : 12000,
+            "checked" : true
+        },
+        {
+            "id" : 4,
+            "name" : "jetski",
+            "price" : 1200,
+            "checked" : false
+        }
+    ]
+}
