@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import {BrowserRouter, Link,Route,Routes} from "react-router-dom";
 import Home from './components/Home';
 import Products from './components/Products';
+import NewProduct from './components/NewProduct';
 import "bootstrap/dist/css/bootstrap.min.css";
 
 
@@ -38,12 +39,21 @@ function App() {
                 :'btn btn-outline-info ms-2' }
               to={"/Products"}>Products</Link> 
           </li>
+          <li>
+            <Link onClick={() => setCurrentRoute("NewProduct")}
+              className={CurrentRoute==='NewProduct'
+                ?'btn btn-info ms-2'
+                :'btn btn-outline-info ms-2' }
+              to={"/NewProduct"}>New Product</Link> 
+          </li>
           
         </ul>
       </nav>
       <Routes>
         <Route path="/Home" element={<Home/>}></Route>
         <Route path="/Products" element={<Products/>}></Route>
+        <Route path="/NewProduct" element={<NewProduct/>}></Route>
+
       </Routes>
     </BrowserRouter>
      

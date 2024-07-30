@@ -1,15 +1,15 @@
 import axios from "axios";
 
 export const productApi = axios.create({
-    baseURL: 'http://localhost:9000'
+    baseURL: 'http://localhost:9000',
 });
 
-export const getProducts = () => {
-    return productApi.get("/products");
+export const getProducts = (keyword = "", page= 1, size= 4) => {
+    return productApi.get(`/products?name_like=${keyword}&_page=${page}&_limit=${size}`);
 };
 
-export const deleteProducts = (product) => {
-    return productApi.delete(`/products/${product}`);
+export const deleteProduct  = (product) => {
+    return productApi.delete(`/products/${product.id}`);
 };
 
 export const getProduct = (id) => {
@@ -20,10 +20,10 @@ export const saveProduct = (product) => {
     return productApi.post(`/products`, product);
 };
 
-export const ckeckProduct = (product) => {
-    return productApi.get(`/products/`,{checked : !product.checked});
+export const checkProduct = (product) => {
+    return productApi.patch(`/products/${product.id}`,{checked : !product.checked});
 };
 
 export const updateProduct = (product) => {
-    return productApi.put(`/products`,product);
+    return productApi.put(`/products/${product.id}`,product);
 };
