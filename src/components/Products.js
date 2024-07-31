@@ -102,12 +102,12 @@ export default function Products() {
                 </table>
                 <ul className='nav nav-pills'>
                   
-                      {
-                        (new Array(state.totalPages).fill(0)).map((v, index) => (
+                {
+                        (new Array(state.totalPages).fill(0).map((v, index) => (
                           <li>
                             <button>{index+1}</button>
                           </li>
-                        ))
+                        )))
                       }
                     
                 </ul>
