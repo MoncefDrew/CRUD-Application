@@ -1,22 +1,40 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {  faCheckCircle, faCircle, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { deleteProducts, getProducts } from '../app/app';
-
+import { checkProduct, deleteProduct, getProducts } from '../app/app';
+import axios from 'axios';
+ 
 
 export default function Products() {
-  const [products, setProducts] = useState([]);
+  const [state, setState] = useState({
+    products: [],
+    currentPage : 1,
+    pagesize : 4,
+    keyword: "",
+    totalPages : 0,
+  });
   
   /* handle update of products */
   useEffect(()  => {
-    handleGetProducts();
-  },[]);
+    handleGetProducts(state.keyword, state.currentPage, state.pagesize)},[]);
 
-  const handleGetProducts = () => {
-    getProducts()
-      .then((resp) =>{
-      setProducts(resp.data);
-    })
+  
+   
+  const handleGetProducts = (keyword, page, size) => {
+    getProducts(keyword, page, size)
+      .then((resp)  =>{
+        const totalElements = resp.headers["x-total-count"];
+        let totalPages = Math.floor(totalElements/size);
+        if (totalElements % size != 0) ++totalPages;
+        setState({
+            ...state,
+            products: resp.data,
+            keyword: keyword, 
+            currentPage: page, 
+            pagesize: size,
+            totalPages: totalPages,
+          });
+      })
       .catch((err) =>{
         console.log(err);
     })
@@ -24,25 +42,25 @@ export default function Products() {
 
   /* handle check state changing */
   const handleCheckStateChange =(product)=>{
-    const newProducts = products.map(p =>{
-      if(p.id === product.id){
-        p.checked=!p.checked;
-      };
-      return p;
-    } );
-    setProducts(newProducts);
-
+     checkProduct(product).then((resp) =>{
+      const newProducts = state.products.map((p)=>{
+        if(p.id == product.id){
+          p.checked = !p.checked;
+        }
+        return p;
+      });
+      setState({...state, products: newProducts});
+     })
   };
 
   /* handle deletion of products */
   const handleProductDelete=(product)=>{
-     deleteProducts(product.id)
-      .then(resp=>{
-      handleGetProducts(product)}).catch(err=>{
-        console.error(err);
-      })
-      };
-  ;
+    deleteProduct(product).then((resp)=>{
+      const newProducts = state.products.filter((p)=> p.id != product.id)
+      setState({...state, products: newProducts})
+    }) 
+    };
+  
 
   return (
     <div className='p-2 m-2'>
@@ -54,20 +72,20 @@ export default function Products() {
                   <thead>
                     <tr>
                       <th>ID</th>
-                      <th>Name</th>
+                      <th>Name</th> 
                       <th>Price</th>
                       <th>Checked</th>
                     </tr>
                   </thead>
                   <tbody>
-                    { products.map(product => (
+                    { state.products.map(product => (
                       <tr key={product.id}>
                         <td>{product.id}</td>
                         <td>{product.name}</td>
                         <td>{product.price}</td>
                         <td>
                           <button onClick={() => handleCheckStateChange(product)}
-                          className='btn btn-outline-success'>
+                            className='btn btn-outline-success'>
                             <FontAwesomeIcon icon={ product.checked?faCheckCircle  : faCircle}>
                               </FontAwesomeIcon>
                           </button>
@@ -82,6 +100,17 @@ export default function Products() {
                     ))}
                   </tbody>
                 </table>
+                <ul className='nav nav-pills'>
+                  
+                  {
+                        (new Array(state.totalPages).fill(0).map((v, index) => (
+                          <li>
+                            <button>{index+1}</button>
+                          </li>
+                        )))
+                      }
+                    
+                </ul>
             </div>
           </div>
         </div>
